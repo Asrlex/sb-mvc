@@ -1,12 +1,19 @@
-package dev.api.springmvc.common.entities;
+package dev.api.springmvc.common.entities.models;
 
 import dev.api.springmvc.api.users.dtos.UserDto;
+import dev.api.springmvc.common.audit.AuditableEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
+import org.hibernate.annotations.SQLDelete;
 
 @Entity
 @Table(name = "users")
-public class User extends Auditable {
+@SQLDelete(sql = "UPDATE users SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@FilterDef(name = "deletedFilter", parameters = @ParamDef(name = "isDeleted", type = Boolean.class))
+@Filter(name = "deletedFilter", condition = "deleted_at IS NULL")
+public class User extends AuditableEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,7 +46,7 @@ public class User extends Auditable {
 		this.role = role;
 	}
 
-	public User(@NotBlank Integer id, @NotBlank String username, @NotBlank String email, String role) {
+	public User(Integer id, String username, String email, String role) {
 		this.id = id;
 		this.username = username;
 		this.email = email;

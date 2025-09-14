@@ -1,8 +1,8 @@
-package dev.api.springmvc.common.entities;
+package dev.api.springmvc.common.entities.search;
 
 public class SqlParameters {
 
-	public class SqlOperator {
+	public static class SqlOperator {
 		public static final String EQUALS = "=";
 		public static final String NOT_EQUALS = "<>";
 		public static final String GREATER_THAN = ">";
@@ -19,7 +19,7 @@ public class SqlParameters {
 		public static final String OR = "OR";
 	}
 
-	public class SqlOrder {
+	public static class SqlOrder {
 		public static final String ASC = "ASC";
 		public static final String DESC = "DESC";
 	}

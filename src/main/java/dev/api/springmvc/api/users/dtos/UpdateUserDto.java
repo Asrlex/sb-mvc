@@ -1,6 +1,6 @@
 package dev.api.springmvc.api.users.dtos;
 
-import dev.api.springmvc.common.entities.User;
+import dev.api.springmvc.common.entities.models.User;
 
 public record UpdateUserDto(Integer id, String username, String email, String role) {
 

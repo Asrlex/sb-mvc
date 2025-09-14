@@ -1,18 +1,22 @@
-package dev.api.springmvc.common.entities;
+package dev.api.springmvc.common.entities.search;
 
 public class SearchCriteria {
 
 	public record Filter(String field, SqlParameters.SqlOperator operator, Object value) {}
 
-	public record Sorter(String field, SqlParameters.SqlOrder operator, Object value) {}
+	public record Sorter(String field, SqlParameters.SqlOrder operator) {}
 
-	private Filter[] filters;
-	private Sorter[] sorters;
-	private Integer page;
-	private Integer pageSize;
+	private final Filter[] filters;
+	private final Sorter[] sorters;
+	private final Integer page;
+	private final Integer pageSize;
 
 	public SearchCriteria() {
 		super();
+		this.filters = new Filter[] {};
+		this.sorters = new Sorter[] {};
+		this.page = 0;
+		this.pageSize = 10;
 	}
 
 	public SearchCriteria(Filter[] filters, Sorter[] sorters, Integer page, Integer pageSize) {
@@ -26,25 +30,13 @@ public class SearchCriteria {
 	public Filter[] getFilters() {
 		return filters;
 	}
-	public void setFilters(Filter[] filters) {
-		this.filters = filters;
-	}
 	public Sorter[] getSorters() {
 		return sorters;
-	}
-	public void setSorters(Sorter[] sorters) {
-		this.sorters = sorters;
 	}
 	public Integer getPage() {
 		return page;
 	}
-	public void setPage(Integer page) {
-		this.page = page;
-	}
 	public Integer getPageSize() {
 		return pageSize;
-	}
-	public void setPageSize(Integer pageSize) {
-		this.pageSize = pageSize;
 	}
 }

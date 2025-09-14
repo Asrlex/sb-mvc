@@ -4,9 +4,9 @@ import dev.api.springmvc.api.auth.entities.LoginRequest;
 import dev.api.springmvc.api.users.dtos.CreateUserDto;
 import dev.api.springmvc.api.users.dtos.UpdateUserDto;
 import dev.api.springmvc.api.users.dtos.UserDto;
-import dev.api.springmvc.common.entities.SearchCriteria;
-import dev.api.springmvc.common.entities.SqlParameters;
-import dev.api.springmvc.common.entities.User;
+import dev.api.springmvc.common.entities.models.User;
+import dev.api.springmvc.common.entities.search.SearchCriteria;
+import dev.api.springmvc.common.entities.search.SqlParameters;
 import dev.api.springmvc.common.exceptions.ResourceNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,6 +29,7 @@ public class UserService {
 
 	/**
 	 * Gets all users
+	 *
 	 * @return List<User> - all users
 	 */
 	public List<UserDto> list(SearchCriteria searchCriteria) {
@@ -85,6 +86,7 @@ public class UserService {
 
 	/**
 	 * Gets all users
+	 *
 	 * @return List<User> - all users
 	 */
 	public List<UserDto> listAll() {
@@ -95,7 +97,20 @@ public class UserService {
 	}
 
 	/**
+	 * Gets all users including deleted ones
+	 *
+	 * @return List<User> - all users including deleted ones
+	 */
+	public List<UserDto> findAllIncludingDeleted() {
+		return this.userRepository.findAllIncludingDeleted().stream()
+				.map(User::generateDto)
+				.sorted((u1, u2) -> u1.getId())
+				.toList();
+	}
+
+	/**
 	 * Get the current authenticated user
+	 *
 	 * @param auth - Authentication object
 	 * @return User - current user
 	 */
@@ -106,6 +121,7 @@ public class UserService {
 
 	/**
 	 * Get a user by its ID
+	 *
 	 * @param id - the user's ID
 	 * @return User - requested user
 	 */
@@ -120,7 +136,24 @@ public class UserService {
 	}
 
 	/**
+	 * Get a user by its ID including deleted ones
+	 *
+	 * @param id - the user's ID
+	 * @return User - requested user
+	 */
+	public UserDto findByIdIncludingDeleted(int id) {
+		Optional<User> requestedUser = this.userRepository.findByIdIncludingDeleted(id).stream().findFirst();
+		if (requestedUser.isPresent()) {
+			User user = requestedUser.get();
+			return user.generateDto();
+		} else {
+			throw new ResourceNotFoundException("User with id " + id + " not found");
+		}
+	}
+
+	/**
 	 * Get a user by its email
+	 *
 	 * @param email - the user's email
 	 * @return User - requested user
 	 */
@@ -136,6 +169,7 @@ public class UserService {
 
 	/**
 	 * Get a user by its username
+	 *
 	 * @param username - the user's username
 	 * @return User - requested user
 	 */
@@ -151,6 +185,7 @@ public class UserService {
 
 	/**
 	 * Create a new User
+	 *
 	 * @param dto - User objet to be created
 	 * @return User - new User
 	 */
@@ -161,6 +196,7 @@ public class UserService {
 
 	/**
 	 * Update an existing User
+	 *
 	 * @param dto - User objet to be updated
 	 * @return User - updated User
 	 */
@@ -175,6 +211,7 @@ public class UserService {
 
 	/**
 	 * Change password for authenticated user
+	 *
 	 * @param dto - map containing old and new password
 	 * @return map containing success message
 	 */
@@ -192,4 +229,32 @@ public class UserService {
 		return saved.generateDto();
 	}
 
+	/**
+	 * Delete a user by its ID
+	 *
+	 * @param id - the user's ID
+	 */
+	public void delete(int id) {
+		this.userRepository.delete(
+				this.userRepository.findById(id).orElseThrow(() ->
+						new ResourceNotFoundException("User with id " + id + " not found")
+				)
+		);
+	}
+
+	/**
+	 * Restore a soft-deleted user by its ID
+	 *
+	 * @param id - the user's ID
+	 * @return User - restored user
+	 */
+	public UserDto restoreById(int id) {
+		Optional<User> restoredUser = this.userRepository.restoreById(id);
+		if (restoredUser.isPresent()) {
+			User user = restoredUser.get();
+			return user.generateDto();
+		} else {
+			throw new ResourceNotFoundException("User with id " + id + " not found or not deleted");
+		}
+	}
 }

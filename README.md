@@ -39,6 +39,8 @@ A robust, production-ready Spring Boot API scaffolding project with modular auth
 - **Pagination & Sorting**: Built-in support for paginated and sorted responses.
 - **Database Migrations**: Flyway integration for managing schema changes.
 - **DTO Mapping**: Use of MapStruct for clean separation between entities and API models.
+- **Auditable Entities**: Automatic tracking of creation and modification timestamps.
+- **Soft Deletion**: Logical deletion of records without physical removal.
 
 ### 8. Standardized Error Handling
 - **Global Exception Handler**: Catches and formats all exceptions into a unified error structure.

@@ -1,14 +1,14 @@
-package dev.api.springmvc.common.entities;
+package dev.api.springmvc.common.audit;
 
 import java.time.temporal.TemporalAccessor;
 import java.util.Optional;
 
 public interface IAuditable<U, T extends TemporalAccessor> {
 
-	Optional<U> getCreatedBy();
+	U getCreatedBy();
 	void setCreatedBy(U createdBy);
 
-	Optional<T> getCreatedAt();
+	T getCreatedAt();
 	void setCreatedAt(T createdAt);
 
 	Optional<U> getUpdatedBy();

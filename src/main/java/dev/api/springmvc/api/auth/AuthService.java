@@ -3,7 +3,7 @@ package dev.api.springmvc.api.auth;
 import dev.api.springmvc.api.auth.entities.LoginRequest;
 import dev.api.springmvc.api.auth.entities.RegisterRequest;
 import dev.api.springmvc.api.users.UserRepository;
-import dev.api.springmvc.common.entities.User;
+import dev.api.springmvc.common.entities.models.User;
 import dev.api.springmvc.common.exceptions.ResourceAlreadyInUseException;
 import dev.api.springmvc.common.exceptions.ResourceNotFoundException;
 import dev.api.springmvc.security.JwtService;

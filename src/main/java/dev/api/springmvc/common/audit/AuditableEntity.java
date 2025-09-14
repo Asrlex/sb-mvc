@@ -1,4 +1,4 @@
-package dev.api.springmvc.common.entities;
+package dev.api.springmvc.common.audit;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @MappedSuperclass
 @EntityListeners(AuditListener.class)
-public abstract class Auditable implements IAuditable<String, Instant> {
+public abstract class AuditableEntity implements IAuditable<String, Instant> {
 
 	@Column(nullable = false, updatable = false)
 	private Instant created_at;
@@ -30,12 +30,12 @@ public abstract class Auditable implements IAuditable<String, Instant> {
 	private String deleted_by;
 
 	@Override
-	public Optional<String> getCreatedBy() { return Optional.ofNullable(created_by); }
+	public String getCreatedBy() { return created_by; }
 	@Override
 	public void setCreatedBy(String created_by) { this.created_by = created_by; }
 
 	@Override
-	public Optional<Instant> getCreatedAt() { return Optional.ofNullable(created_at); }
+	public Instant getCreatedAt() { return created_at; }
 	@Override
 	public void setCreatedAt(Instant created_at) { this.created_at = created_at; }
 

@@ -4,7 +4,7 @@ import dev.api.springmvc.api.auth.entities.LoginRequest;
 import dev.api.springmvc.api.users.dtos.CreateUserDto;
 import dev.api.springmvc.api.users.dtos.UpdateUserDto;
 import dev.api.springmvc.api.users.dtos.UserDto;
-import dev.api.springmvc.common.entities.SearchCriteria;
+import dev.api.springmvc.common.entities.search.SearchCriteria;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -44,8 +44,10 @@ public class UserController {
 		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "Unauthorized access"),
 		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "Forbidden access")
 	})
-	public List<UserDto> getAllUsers() {
-		return userService.listAll();
+	public List<UserDto> getAllUsers(@RequestParam Boolean includeDeleted) {
+		return includeDeleted ?
+				userService.listAll()
+				: userService.findAllIncludingDeleted();
 	}
 
 	@GetMapping("/me")
@@ -91,8 +93,10 @@ public class UserController {
 		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "Forbidden access"),
 		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "User not found")
 	})
-	public UserDto getUserById(@PathVariable String id) {
-		return userService.findById(Integer.parseInt(id));
+	public UserDto getUserById(@PathVariable String id, @RequestParam Boolean includeDeleted) {
+		return includeDeleted ?
+				userService.findByIdIncludingDeleted(Integer.parseInt(id))
+				: userService.findById(Integer.parseInt(id));
 	}
 
 	@PostMapping
@@ -143,4 +147,27 @@ public class UserController {
 		return this.userService.changePassword(dto);
 	}
 
+	@DeleteMapping("/{id}")
+	@Operation(summary = "Delete User", description = "Delete a user by ID")
+	@ApiResponses(value = {
+		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "User deleted successfully"),
+		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "Unauthorized access"),
+		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "Forbidden access"),
+		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "User not found")
+	})
+	public void deleteUser(@PathVariable String id) {
+		this.userService.delete(Integer.parseInt(id));
+	}
+
+	@GetMapping("/restore/{id}")
+	@Operation(summary = "Restore User", description = "Restore a soft-deleted user by ID")
+	@ApiResponses(value = {
+		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "User restored successfully"),
+		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "Unauthorized access"),
+		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "Forbidden access"),
+		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "User not found or not deleted")
+	})
+	public UserDto restoreUser(@PathVariable String id) {
+		return userService.restoreById(Integer.parseInt(id));
+	}
 }

@@ -1,6 +1,6 @@
 package dev.api.springmvc.api.users.dtos;
 
-import dev.api.springmvc.common.entities.User;
+import dev.api.springmvc.common.entities.models.User;
 import jakarta.validation.constraints.NotBlank;
 
 public record CreateUserDto(@NotBlank String username, @NotBlank String email, @NotBlank String password, String role) {
