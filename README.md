@@ -27,8 +27,8 @@ A robust, production-ready Spring Boot API scaffolding project with modular auth
 
 ### 5. Request Logging Filter
 - **Comprehensive Logging**: Logs every request and response with unique request IDs, method, URI, status, and processing time.
-- **Traceability**: Adds `X-Request-Id` header to all responses for easy tracing.
-  - **Actor Information**: Logs authenticated user details when available.
+  - **Traceability**: Adds `X-Request-Id` header to all responses for easy tracing.
+  - **JSON Format**: Logs are structured in JSON for easy ingestion into log management systems.
 
 ### 6. Response Wrapper
 - **Standardized API Responses**: All responses are wrapped in a consistent envelope (`ApiEnvelope`), including metadata and error codes.

@@ -2,7 +2,10 @@ package dev.api.springmvc.security;
 
 import dev.api.springmvc.common.filter.AuditContextFilter;
 import dev.api.springmvc.common.filter.RequestLoggingFilter;
+import dev.api.springmvc.security.guards.ApiKeyAuthenticationFilter;
 import dev.api.springmvc.security.guards.CompositeAuthenticationFilter;
+import dev.api.springmvc.security.guards.JwtAuthenticationFilter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,27 +23,18 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfig {
 
-	private final CompositeAuthenticationFilter compositeAuthenticationFilter;
 	private final StandardAuthEntryPoint entryPoint;
 	private final StandardAccessDeniedHandler deniedHandler;
 
-	public SecurityConfig(CompositeAuthenticationFilter compositeAuthenticationFilter,
-						  StandardAuthEntryPoint entryPoint,
+	public SecurityConfig(StandardAuthEntryPoint entryPoint,
 						  StandardAccessDeniedHandler deniedHandler) {
-		this.compositeAuthenticationFilter = compositeAuthenticationFilter;
 		this.entryPoint = entryPoint;
 		this.deniedHandler = deniedHandler;
 	}
 
-	/**
-	 * Configures the security filter chain.
-	 * Disables CSRF, sets up request authorization, exception handling, and adds custom authentication filter.
-	 * @param http - the HttpSecurity object to configure
-	 * @return the configured SecurityFilterChain
-	 * @throws Exception - if an error occurs during configuration
-	 */
 	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+	public SecurityFilterChain filterChain(HttpSecurity http,
+										   CompositeAuthenticationFilter compositeAuthenticationFilter) throws Exception {
 		return http
 				.csrf(AbstractHttpConfigurer::disable)
 				.authorizeHttpRequests(auth -> auth
@@ -60,47 +54,46 @@ public class SecurityConfig {
 						.authenticationEntryPoint(entryPoint)
 						.accessDeniedHandler(deniedHandler)
 				)
-				.addFilterBefore(requestLoggingFilter(), CompositeAuthenticationFilter.class)
+				.addFilterBefore(requestLoggingFilter(), UsernamePasswordAuthenticationFilter.class)
 				.addFilterBefore(compositeAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-				.addFilterAfter(auditContextFilter(), CompositeAuthenticationFilter.class)
+				.addFilterAfter(auditContextFilter(), UsernamePasswordAuthenticationFilter.class)
 				.build();
 	}
 
-	/**
-	 * Exposes the AuthenticationManager bean.
-	 * @param config - the AuthenticationConfiguration
-	 * @return the AuthenticationManager
-	 * @throws Exception - if an error occurs while retrieving the AuthenticationManager
-	 */
 	@Bean
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
 		return config.getAuthenticationManager();
 	}
 
-	/**
-	 * Exposes the PasswordEncoder bean using BCrypt.
-	 * @return the PasswordEncoder
-	 */
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
 
-	/**
-	 * Exposes the AuditContextFilter bean.
-	 * @return the AuditContextFilter
-	 */
 	@Bean
 	public AuditContextFilter auditContextFilter() {
 		return new AuditContextFilter();
 	}
 
-	/**
-	 * Exposes the RequestLoggingFilter bean.
-	 * @return the RequestLoggingFilter
-	 */
 	@Bean
 	public RequestLoggingFilter requestLoggingFilter() {
 		return new RequestLoggingFilter();
+	}
+
+	@Bean
+	public CompositeAuthenticationFilter compositeAuthenticationFilter(
+			JwtAuthenticationFilter jwtAuthenticationFilter,
+			ApiKeyAuthenticationFilter apiKeyAuthenticationFilter) {
+		return new CompositeAuthenticationFilter(jwtAuthenticationFilter, apiKeyAuthenticationFilter);
+	}
+
+	@Bean
+	public JwtAuthenticationFilter jwtAuthenticationFilter(JwtService jwtService) {
+		return new JwtAuthenticationFilter(jwtService);
+	}
+
+	@Bean
+	public ApiKeyAuthenticationFilter apiKeyAuthenticationFilter(@Value("${x-api-key}") String expectedApiKey) {
+		return new ApiKeyAuthenticationFilter(expectedApiKey);
 	}
 }

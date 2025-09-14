@@ -1,8 +1,8 @@
 package dev.api.springmvc.common.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.api.springmvc.common.audit.AuditContext;
 import dev.api.springmvc.common.entities.StandardParameters;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -11,8 +11,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
@@ -26,8 +24,6 @@ import java.util.UUID;
 /**
  * Filter for logging web requests and responses.
  */
-@Component
-@Order(1)
 public class RequestLoggingFilter extends OncePerRequestFilter {
 	private static final Logger log = LoggerFactory.getLogger(RequestLoggingFilter.class);
 	private final ObjectMapper objectMapper = new ObjectMapper();

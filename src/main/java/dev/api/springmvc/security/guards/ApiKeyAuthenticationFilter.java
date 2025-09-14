@@ -4,12 +4,11 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -18,13 +17,12 @@ import java.util.List;
 /**
  * Filter to authenticate requests based on an API key provided in the headers.
  */
-@Component
 public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
 
 	private static final String API_KEY_HEADER = "X-api-key";
 	private final String EXPECTED_API_KEY;
 
-	public ApiKeyAuthenticationFilter(@Value("${x-api-key}") String expectedApiKey) {
+	public ApiKeyAuthenticationFilter(String expectedApiKey) {
 		this.EXPECTED_API_KEY = expectedApiKey;
 	}
 
@@ -32,7 +30,10 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
 	 * Checks for the API key in the request headers and sets the authentication context if valid.
 	 */
 	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+	protected void doFilterInternal(
+			@NonNull HttpServletRequest request,
+			@NonNull HttpServletResponse response,
+			@NonNull FilterChain chain)
 			throws ServletException, IOException {
 
 		String apiKey = request.getHeader(API_KEY_HEADER);
