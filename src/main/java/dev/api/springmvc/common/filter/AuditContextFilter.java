@@ -1,6 +1,7 @@
 package dev.api.springmvc.common.filter;
 
 import dev.api.springmvc.common.audit.AuditContext;
+import dev.api.springmvc.common.entities.StandardParameters;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +25,7 @@ public class AuditContextFilter extends OncePerRequestFilter {
 			if (auth != null && auth.isAuthenticated()) {
 				AuditContext.setActor(auth.getName());
 			} else {
-				AuditContext.setActor("system");
+				AuditContext.setActor(StandardParameters.SYSTEM_USER);
 			}
 
 			filterChain.doFilter(request, response);

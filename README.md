@@ -19,6 +19,7 @@ A robust, production-ready Spring Boot API scaffolding project with modular auth
 - **Spring Security Integration**: Centralized config for authentication and authorization.
 - **Custom Entry Point & Access Denied Handler**: Standardized error responses for unauthorized and forbidden access.
 - **Endpoint Whitelisting**: Public access for `/auth/**`, `/healthcheck`, and Swagger docs; all other endpoints require authentication.
+- **Filter Registration**: Ensures custom filters are properly registered in the security chain.
 
 ### 4. Access Points
 - **RESTful Endpoints**: Well-structured, discoverable API routes for all resources.
@@ -27,6 +28,7 @@ A robust, production-ready Spring Boot API scaffolding project with modular auth
 ### 5. Request Logging Filter
 - **Comprehensive Logging**: Logs every request and response with unique request IDs, method, URI, status, and processing time.
 - **Traceability**: Adds `X-Request-Id` header to all responses for easy tracing.
+  - **Actor Information**: Logs authenticated user details when available.
 
 ### 6. Response Wrapper
 - **Standardized API Responses**: All responses are wrapped in a consistent envelope (`ApiEnvelope`), including metadata and error codes.

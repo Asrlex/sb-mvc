@@ -1,5 +1,8 @@
 package dev.api.springmvc.common.filter;
 
+import dev.api.springmvc.common.audit.AuditContext;
+import dev.api.springmvc.common.entities.StandardParameters;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -15,6 +18,9 @@ import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -23,8 +29,8 @@ import java.util.UUID;
 @Component
 @Order(1)
 public class RequestLoggingFilter extends OncePerRequestFilter {
-
 	private static final Logger log = LoggerFactory.getLogger(RequestLoggingFilter.class);
+	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	/**
 	 * Logs request and response details including method, URI, status, lengths, and processing time.
@@ -36,33 +42,39 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
 	 * @throws IOException - if an I/O error occurs
 	 */
 	@Override
-	protected void doFilterInternal(@Nonnull HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+	protected void doFilterInternal(@Nonnull HttpServletRequest request,
+									@Nonnull HttpServletResponse response,
+									FilterChain chain)
 			throws ServletException, IOException {
 
 		String requestId = UUID.randomUUID().toString();
 		MDC.put("requestId", requestId);
-		response.addHeader("X-Request-Id", requestId);
+		long start = System.currentTimeMillis();
+		String actor = AuditContext.getActor().orElse(StandardParameters.SYSTEM_USER);
+		MDC.put("actor", actor);
 
 		ContentCachingRequestWrapper req = new ContentCachingRequestWrapper(request);
 		ContentCachingResponseWrapper res = new ContentCachingResponseWrapper(response);
 
-		long start = System.currentTimeMillis();
 		try {
+			response.addHeader("X-Request-Id", requestId);
 			chain.doFilter(req, res);
 		} finally {
-			long ms = System.currentTimeMillis() - start;
-			byte[] reqBody = req.getContentAsByteArray();
-			byte[] resBody = res.getContentAsByteArray();
+			long duration = System.currentTimeMillis() - start;
 
-			String paddedUri = String.format("%-20s", request.getRequestURI());
-			log.info("===REQ=== [{}] {} {}", requestId, request.getMethod(), paddedUri);
-			log.info(
-					"===RES=== [{}] [{}] len={}B in {}ms",
-					requestId,
-					res.getStatus(),
-					resBody.length,
-					ms
-			);
+			Map<String, Object> logEntry = new HashMap<>();
+			logEntry.put("timestamp", Instant.now().toString());
+			logEntry.put("requestId", requestId);
+			logEntry.put("method", request.getMethod());
+			logEntry.put("uri", request.getRequestURI());
+			logEntry.put("status", response.getStatus());
+			logEntry.put("durationMs", duration);
+			logEntry.put("clientIp", request.getRemoteAddr());
+			logEntry.put("userAgent", request.getHeader("User-Agent"));
+			logEntry.put("actor", actor);
+
+			String jsonLog = objectMapper.writeValueAsString(logEntry);
+			log.info(jsonLog);
 
 			res.copyBodyToResponse();
 

@@ -1,5 +1,7 @@
 package dev.api.springmvc.security;
 
+import dev.api.springmvc.common.filter.AuditContextFilter;
+import dev.api.springmvc.common.filter.RequestLoggingFilter;
 import dev.api.springmvc.security.guards.CompositeAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,14 +44,25 @@ public class SecurityConfig {
 		return http
 				.csrf(AbstractHttpConfigurer::disable)
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/auth/**", "/healthcheck", "/v3/api-docs/**", "/api-docs/**", "/api-docs.yaml", "/swagger-api-docs", "/swagger-ui.html", "/swagger-ui/**").permitAll()
+						.requestMatchers(
+								"/auth/**",
+								"/healthcheck",
+								"/v3/api-docs/**",
+								"/api-docs/**",
+								"/api-docs.yaml",
+								"/swagger-api-docs",
+								"/swagger-ui.html",
+								"/swagger-ui/**"
+						).permitAll()
 						.anyRequest().authenticated()
 				)
 				.exceptionHandling(ex -> ex
 						.authenticationEntryPoint(entryPoint)
 						.accessDeniedHandler(deniedHandler)
 				)
+				.addFilterBefore(requestLoggingFilter(), CompositeAuthenticationFilter.class)
 				.addFilterBefore(compositeAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+				.addFilterAfter(auditContextFilter(), CompositeAuthenticationFilter.class)
 				.build();
 	}
 
@@ -71,5 +84,23 @@ public class SecurityConfig {
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
+	}
+
+	/**
+	 * Exposes the AuditContextFilter bean.
+	 * @return the AuditContextFilter
+	 */
+	@Bean
+	public AuditContextFilter auditContextFilter() {
+		return new AuditContextFilter();
+	}
+
+	/**
+	 * Exposes the RequestLoggingFilter bean.
+	 * @return the RequestLoggingFilter
+	 */
+	@Bean
+	public RequestLoggingFilter requestLoggingFilter() {
+		return new RequestLoggingFilter();
 	}
 }
