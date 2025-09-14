@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @NoRepositoryBean
-public interface SoftDeleteRepository<T extends AuditableEntity, ID>
+public interface AuditRepository<T extends AuditableEntity, ID>
 		extends JpaRepository<T, ID> {
 
 	default void softDelete(T entity) {

@@ -2,8 +2,6 @@
 
 ## GENERIC
 
-- [ ] register new filters in security config
-
 ## PHASE 1
 
 - [x] Basic Controllers
@@ -23,9 +21,9 @@
   - [x] Database Migrations
   - [x] DTO Mapping
   - [x] Repository Pattern
-  - [ ] Audit Fields
-  - [X] Soft Deletion
-  - [X] Custom Repositories with Generics and Specifications
+  - [x] Audit Fields
+  - [x] Soft Deletion
+  - [x] Custom Repositories with Generics and Specifications
 - [x] Standardized Error Handling
 - [x] README.md
 
