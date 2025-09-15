@@ -49,6 +49,10 @@ A robust, production-ready Spring Boot API scaffolding project with modular auth
 - **Detailed Validation Errors**: Field-level error reporting for request validation failures.
 - **Consistent Error Codes**: Uses a fixed set of response codes for all error scenarios.
 
+### 9. OpenAPI/Swagger Integration
+- **Auto-generated Documentation**: Comprehensive API docs generated from code annotations.
+- **Interactive UI**: Explore and test API endpoints directly from the Swagger UI.
+
 ---
 
 ## Getting Started

@@ -26,6 +26,7 @@
   - [x] Custom Repositories with Generics and Specifications
 - [x] Standardized Error Handling
 - [x] README.md
+- [x] OpenAPI/Swagger Integration
 
 ## PHASE 2
 
@@ -42,7 +43,7 @@
   - [ ] GraphQL Support
   - [ ] WebSocket Support
 - [ ] Observability Stack
-  - [ ] Micrommeter/Prometheus Metrics
+  - [ ] Micrometer/Prometheus Metrics
   - [ ] Tracing with OpenTelemetry
   - [ ] JSON structured logs for ELK/Loki
 - [ ] Resilience & Messaging
