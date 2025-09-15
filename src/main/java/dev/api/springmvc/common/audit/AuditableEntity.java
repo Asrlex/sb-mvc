@@ -1,5 +1,6 @@
 package dev.api.springmvc.common.audit;
 
+import dev.api.springmvc.common.entities.StandardParameters;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
@@ -15,7 +16,7 @@ public abstract class AuditableEntity implements IAuditable<String, Instant> {
 	private Instant created_at;
 
 	@Column(nullable = false)
-	private String created_by;
+	private String created_by = StandardParameters.SYSTEM_USER;
 
 	@Column(nullable = false)
 	private Instant updated_at;
@@ -30,7 +31,7 @@ public abstract class AuditableEntity implements IAuditable<String, Instant> {
 	private String deleted_by;
 
 	@Override
-	public String getCreatedBy() { return created_by; }
+	public String getCreatedBy() { return created_by ; }
 	@Override
 	public void setCreatedBy(String created_by) { this.created_by = created_by; }
 

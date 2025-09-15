@@ -1,10 +1,9 @@
 package dev.api.springmvc.api.users;
 
 import dev.api.springmvc.api.auth.entities.LoginRequest;
-import dev.api.springmvc.api.users.dtos.CreateUserDto;
 import dev.api.springmvc.api.users.dtos.UpdateUserDto;
 import dev.api.springmvc.api.users.dtos.UserDto;
-import dev.api.springmvc.common.entities.models.User;
+import dev.api.springmvc.common.entities.models.Users;
 import dev.api.springmvc.common.entities.search.SearchCriteria;
 import dev.api.springmvc.common.entities.search.SqlParameters;
 import dev.api.springmvc.common.exceptions.ResourceNotFoundException;
@@ -12,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -54,7 +54,7 @@ public class UserService {
 					}
 					return true;
 				})
-				.map(User::generateDto)
+				.map(Users::generateDto)
 				.sorted((u1, u2) -> {
 					if (searchCriteria.getSorters() != null) {
 						for (SearchCriteria.Sorter sorter : searchCriteria.getSorters()) {
@@ -75,7 +75,7 @@ public class UserService {
 							}
 						}
 					}
-					return Integer.compare(u1.getId(), u2.getId());
+					return u1.getId().compareTo(u2.getId());
 				})
 				.skip(searchCriteria.getPage() != null && searchCriteria.getPageSize() != null
 						? (long) (searchCriteria.getPage() - 1) * searchCriteria.getPageSize()
@@ -89,10 +89,10 @@ public class UserService {
 	 *
 	 * @return List<User> - all users
 	 */
-	public List<UserDto> listAll() {
+	public List<UserDto> findAll() {
 		return this.userRepository.findAll().stream()
-				.map(User::generateDto)
-				.sorted((u1, u2) -> u1.getId())
+				.map(Users::generateDto)
+				.sorted(Comparator.comparing(UserDto::getId))
 				.toList();
 	}
 
@@ -103,8 +103,8 @@ public class UserService {
 	 */
 	public List<UserDto> findAllIncludingDeleted() {
 		return this.userRepository.findAllIncludingDeleted().stream()
-				.map(User::generateDto)
-				.sorted((u1, u2) -> u1.getId())
+				.map(Users::generateDto)
+				.sorted(Comparator.comparing(UserDto::getId))
 				.toList();
 	}
 
@@ -125,10 +125,10 @@ public class UserService {
 	 * @param id - the user's ID
 	 * @return User - requested user
 	 */
-	public UserDto findById(int id) {
-		Optional<User> requestedUser = this.userRepository.findById(id);
+	public UserDto findById(Long id) {
+		Optional<Users> requestedUser = this.userRepository.findById(id);
 		if (requestedUser.isPresent()) {
-			User user = requestedUser.get();
+			Users user = requestedUser.get();
 			return user.generateDto();
 		} else {
 			throw new ResourceNotFoundException("User with id " + id + " not found");
@@ -141,10 +141,10 @@ public class UserService {
 	 * @param id - the user's ID
 	 * @return User - requested user
 	 */
-	public UserDto findByIdIncludingDeleted(int id) {
-		Optional<User> requestedUser = this.userRepository.findByIdIncludingDeleted(id).stream().findFirst();
+	public UserDto findByIdIncludingDeleted(Long id) {
+		Optional<Users> requestedUser = this.userRepository.findByIdIncludingDeleted(id).stream().findFirst();
 		if (requestedUser.isPresent()) {
-			User user = requestedUser.get();
+			Users user = requestedUser.get();
 			return user.generateDto();
 		} else {
 			throw new ResourceNotFoundException("User with id " + id + " not found");
@@ -158,9 +158,9 @@ public class UserService {
 	 * @return User - requested user
 	 */
 	public UserDto findByEmail(String email) {
-		Optional<User> requestedUser = this.userRepository.findByEmail(email);
+		Optional<Users> requestedUser = this.userRepository.findByEmail(email);
 		if (requestedUser.isPresent()) {
-			User user = requestedUser.get();
+			Users user = requestedUser.get();
 			return user.generateDto();
 		} else {
 			throw new ResourceNotFoundException("User with email " + email + " not found");
@@ -174,24 +174,13 @@ public class UserService {
 	 * @return User - requested user
 	 */
 	public UserDto findByUsername(String username) {
-		Optional<User> requestedUser = this.userRepository.findByUsername(username);
+		Optional<Users> requestedUser = this.userRepository.findByUsername(username);
 		if (requestedUser.isPresent()) {
-			User user = requestedUser.get();
+			Users user = requestedUser.get();
 			return user.generateDto();
 		} else {
 			throw new ResourceNotFoundException("User with username " + username + " not found");
 		}
-	}
-
-	/**
-	 * Create a new User
-	 *
-	 * @param dto - User objet to be created
-	 * @return User - new User
-	 */
-	public UserDto create(CreateUserDto dto) {
-		User saved = this.userRepository.save(dto.createUser());
-		return saved.generateDto();
 	}
 
 	/**
@@ -202,7 +191,7 @@ public class UserService {
 	 */
 	public UserDto update(UpdateUserDto dto) {
 		if (this.userRepository.existsById(dto.id())) {
-			User updated = this.userRepository.save(dto.updateUser());
+			Users updated = this.userRepository.save(dto.updateUser());
 			return updated.generateDto();
 		} else {
 			throw new ResourceNotFoundException("User with id " + dto.id() + " not found");
@@ -216,7 +205,7 @@ public class UserService {
 	 * @return map containing success message
 	 */
 	public UserDto changePassword(LoginRequest dto) {
-		User user = userRepository.findByEmail(dto.getEmail())
+		Users user = userRepository.findByEmail(dto.getEmail())
 				.orElseThrow(() -> new ResourceNotFoundException("User with email " + dto.getEmail() + " not found"));
 
 		if (!passwordEncoder.matches(dto.getPassword(), user.getPasswordHash())) {
@@ -224,7 +213,7 @@ public class UserService {
 		}
 
 		user.setPasswordHash(passwordEncoder.encode(dto.getPassword()));
-		User saved = userRepository.save(user);
+		Users saved = userRepository.save(user);
 
 		return saved.generateDto();
 	}
@@ -234,7 +223,7 @@ public class UserService {
 	 *
 	 * @param id - the user's ID
 	 */
-	public void delete(int id) {
+	public void delete(Long id) {
 		this.userRepository.delete(
 				this.userRepository.findById(id).orElseThrow(() ->
 						new ResourceNotFoundException("User with id " + id + " not found")
@@ -248,10 +237,10 @@ public class UserService {
 	 * @param id - the user's ID
 	 * @return User - restored user
 	 */
-	public UserDto restoreById(int id) {
-		Optional<User> restoredUser = this.userRepository.restoreById(id);
+	public UserDto restoreById(Long id) {
+		Optional<Users> restoredUser = this.userRepository.restoreById(id);
 		if (restoredUser.isPresent()) {
-			User user = restoredUser.get();
+			Users user = restoredUser.get();
 			return user.generateDto();
 		} else {
 			throw new ResourceNotFoundException("User with id " + id + " not found or not deleted");

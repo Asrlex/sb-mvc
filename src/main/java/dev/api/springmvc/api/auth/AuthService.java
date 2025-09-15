@@ -3,10 +3,11 @@ package dev.api.springmvc.api.auth;
 import dev.api.springmvc.api.auth.entities.LoginRequest;
 import dev.api.springmvc.api.auth.entities.RegisterRequest;
 import dev.api.springmvc.api.users.UserRepository;
-import dev.api.springmvc.common.entities.models.User;
+import dev.api.springmvc.common.entities.models.Users;
 import dev.api.springmvc.common.exceptions.ResourceAlreadyInUseException;
 import dev.api.springmvc.common.exceptions.ResourceNotFoundException;
 import dev.api.springmvc.security.JwtService;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -31,11 +32,11 @@ public class AuthService {
 	 * @return JWT token
 	 */
 	public Map<String, String> login(LoginRequest dto) {
-		User user = userRepository.findByEmail(dto.getEmail())
+		Users user = userRepository.findByEmail(dto.getEmail())
 				.orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + dto.getEmail()));
 
 		if (!passwordEncoder.matches(dto.getPassword(), user.getPasswordHash())) {
-			throw new RuntimeException("Invalid credentials");
+			throw new BadCredentialsException("Invalid credentials");
 		}
 
 		return mapUserClaimsToToken(user);
@@ -51,13 +52,13 @@ public class AuthService {
 			throw new ResourceAlreadyInUseException("Email already in use", dto.getEmail());
 		}
 
-		User newUser = new User(
+		Users newUser = new Users(
 				dto.getUsername(),
 				dto.getEmail(),
 				passwordEncoder.encode(dto.getPassword()),
 				dto.getRole());
 
-		User savedUser = userRepository.save(newUser);
+		Users savedUser = userRepository.save(newUser);
 
 		return mapUserClaimsToToken(savedUser);
 	}
@@ -67,7 +68,7 @@ public class AuthService {
 	 * @param user - user entity
 	 * @return map containing JWT token
 	 */
-	private Map<String, String> mapUserClaimsToToken(User user) {
+	private Map<String, String> mapUserClaimsToToken(Users user) {
 		Map<String, Object> claims = Map.of(
 				"id", user.getId(),
 				"username", user.getUsername(),

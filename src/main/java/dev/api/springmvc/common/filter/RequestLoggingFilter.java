@@ -68,6 +68,12 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
 			logEntry.put("clientIp", request.getRemoteAddr());
 			logEntry.put("userAgent", request.getHeader("User-Agent"));
 			logEntry.put("actor", actor);
+			String queryString = request.getQueryString();
+			logEntry.put("queryString", queryString);
+			Map<String, String[]> parameterMap = request.getParameterMap();
+			Map<String, Object> params = new HashMap<>();
+			parameterMap.forEach((k, v) -> params.put(k, v.length == 1 ? v[0] : v));
+			logEntry.put("parameters", params);
 
 			String jsonLog = objectMapper.writeValueAsString(logEntry);
 			log.info(jsonLog);

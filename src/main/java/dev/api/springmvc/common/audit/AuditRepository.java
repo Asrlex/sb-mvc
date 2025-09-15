@@ -1,7 +1,7 @@
 package dev.api.springmvc.common.audit;
 
 import dev.api.springmvc.common.entities.StandardParameters;
-import dev.api.springmvc.common.entities.models.User;
+import dev.api.springmvc.common.entities.models.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.NoRepositoryBean;
@@ -40,12 +40,12 @@ public interface AuditRepository<T extends AuditableEntity, ID>
 		entities.forEach(this::delete);
 	}
 
-	@Query(value = BaseQueries.FIND_ALL_INCLUDE_DELETED, nativeQuery = true)
-	List<User> findAllIncludingDeleted();
+	@Query(value = BaseQueries.FIND_ALL_INCLUDE_DELETED)
+	List<Users> findAllIncludingDeleted();
 
-	@Query(value = BaseQueries.FIND_BY_ID_INCLUDE_DELETED, nativeQuery = true)
+	@Query(value = BaseQueries.FIND_BY_ID_INCLUDE_DELETED)
 	List<T> findByIdIncludingDeleted(@Param("id") ID id);
 
-	@Query(value = BaseQueries.RESTORE_BY_ID, nativeQuery = true)
+	@Query(value = BaseQueries.RESTORE_BY_ID)
 	Optional<T> restoreById(@Param("id") ID id);
 }

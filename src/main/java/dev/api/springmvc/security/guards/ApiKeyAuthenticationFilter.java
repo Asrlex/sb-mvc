@@ -1,5 +1,6 @@
 package dev.api.springmvc.security.guards;
 
+import dev.api.springmvc.common.entities.StandardParameters;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,7 +40,7 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
 		String apiKey = request.getHeader(API_KEY_HEADER);
 		if (apiKey != null && apiKey.equals(EXPECTED_API_KEY)) {
 			var authorities = List.of(new SimpleGrantedAuthority("ROLE_API"));
-			var auth = new UsernamePasswordAuthenticationToken("apiKeyUser", null, authorities);
+			var auth = new UsernamePasswordAuthenticationToken(StandardParameters.API_KEY_USER, null, authorities);
 			auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 			SecurityContextHolder.getContext().setAuthentication(auth);
 		}

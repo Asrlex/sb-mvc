@@ -12,13 +12,13 @@ public class AuditListener {
 		Instant now = Instant.now();
 		entity.setCreatedAt(now);
 		entity.setUpdatedAt(now);
-		entity.setCreatedBy(entity.getCreatedBy());
+		entity.setCreatedBy(AuditContext.getActor().orElse(StandardParameters.SYSTEM_USER));
 		entity.setUpdatedBy(entity.getCreatedBy());
 	}
 
 	@PreUpdate
 	public void setUpdateFields(AuditableEntity entity) {
 		entity.setUpdatedAt(Instant.now());
-		entity.setUpdatedBy(entity.getUpdatedBy().orElse(StandardParameters.SYSTEM_USER));
+		entity.setUpdatedBy(AuditContext.getActor().orElse(StandardParameters.SYSTEM_USER));
 	}
 }

@@ -2,22 +2,22 @@ package dev.api.springmvc.api.users.dtos;
 
 public class UserDto {
 
-	private int id;
+	private Long id;
 	private String username;
 	private String email;
 	private String role;
 
-	public UserDto(int id, String username, String email, String role) {
+	public UserDto(Long id, String username, String email, String role) {
 		this.id = id;
 		this.username = username;
 		this.email = email;
 		this.role = role;
 	}
 
-	public int getId() {
+	public Long getId() {
 		return id;
 	}
-	public void setId(int id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	public String getUsername() {
