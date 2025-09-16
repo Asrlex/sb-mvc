@@ -36,6 +36,7 @@
   - [x] Docker Compose with SQLite (for local dev)
   - [x] Docker Compose with Postgres
   - [x] Multi-stage builds for smaller image size
+  - [x] Flyway migrations in Docker
 - [ ] Caching with Redis/Caffeine
 - [ ] Rate Limiting with Bucket4j
 - [ ] RBAC/ABAC

@@ -37,3 +37,10 @@ docker compose -f ./compose.yaml up --build
 docker compose -f compose.dev.yaml down
 docker compose -f compose.yaml down
 ```
+
+## Docker Compose + Flyway Migrations
+
+```bash
+# Enter the running container
+docker compose -f compose.dev.yaml exec springmvc-dev mvn flyway:migrate
+```

@@ -17,5 +17,6 @@ services:
     volumes:
       - ./src:/app/src
       - ./pom.xml:/app/pom.xml
+      - ./db/migration:/app/db/migration
       - ./data:/data
     command: mvn spring-boot:run -Dspring-boot.run.profiles=sqlite
