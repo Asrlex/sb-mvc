@@ -44,6 +44,11 @@ public class EndpointLogger implements ApplicationListener<ContextRefreshedEvent
 				e -> logEndpoint(e.getKey(), e.getValue()));
 	}
 
+	/**
+	 * Logs a single endpoint's details.
+	 * @param mapping - the request mapping info
+	 * @param method - the handler method
+	 */
 	private void logEndpoint(RequestMappingInfo mapping, HandlerMethod method) {
 		String methods = mapping.getMethodsCondition().isEmpty()
 				? "[ALL]"

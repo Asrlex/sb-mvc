@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+  springmvc-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile-dev
+    container_name: springmvc_dev
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: sqlite
+      JWT_SECRET: 0b7406ebe160db49f9324f78cc8bf60d
+      JWT_EXPIRATION: 3600000
+      SERVER_PORT: 8080
+      X_API_KEY: 4133f6c5a711bf720d8f0c817fb19897
+    volumes:
+      - ./src:/app/src
+      - ./pom.xml:/app/pom.xml
+      - ./data:/data
+    command: mvn spring-boot:run -Dspring-boot.run.profiles=sqlite

@@ -1,0 +1,38 @@
+version: "3.9"
+services:
+  springmvc:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: springmvc_app
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: postgres
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: springmvc
+      DB_USER: appuser
+      DB_PASSWORD: apppass
+      JWT_SECRET: "prodsecretjwt"
+      JWT_EXPIRATION: "3600000"
+      X_API_KEY: "prodapikey"
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: postgres:16
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: apppass
+      POSTGRES_DB: springmvc
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  pgdata:
