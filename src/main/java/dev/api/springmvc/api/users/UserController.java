@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -99,6 +100,7 @@ public class UserController {
 	}
 
 	@PutMapping
+	@PreAuthorize("hasRole('ADMIN')")
 	@Operation(summary = "Update User", description = "Update an existing user")
 	@io.swagger.v3.oas.annotations.parameters.RequestBody(
 		description = "User update payload",
@@ -131,6 +133,7 @@ public class UserController {
 	}
 
 	@DeleteMapping("/{id}")
+	@PreAuthorize("hasRole('ADMIN')")
 	@Operation(summary = "Delete User", description = "Delete a user by ID")
 	@ApiResponses(value = {
 		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "User deleted successfully"),
@@ -142,7 +145,8 @@ public class UserController {
 		this.userService.delete(Long.getLong(id));
 	}
 
-	@GetMapping("/restore/{id}")
+	@PostMapping("/restore/{id}")
+	@PreAuthorize("hasRole('ADMIN')")
 	@Operation(summary = "Restore User", description = "Restore a soft-deleted user by ID")
 	@ApiResponses(value = {
 		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "User restored successfully"),
