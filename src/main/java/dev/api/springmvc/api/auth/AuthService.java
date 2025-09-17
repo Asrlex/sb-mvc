@@ -7,6 +7,8 @@ import dev.api.springmvc.common.entities.models.Users;
 import dev.api.springmvc.common.exceptions.ResourceAlreadyInUseException;
 import dev.api.springmvc.common.exceptions.ResourceNotFoundException;
 import dev.api.springmvc.security.JwtService;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -47,6 +49,10 @@ public class AuthService {
 	 * @param dto - registration data
 	 * @return JWT token
 	 */
+	@Caching(evict = {
+			@CacheEvict(value = "users", key = "'all'"),
+			@CacheEvict(value = "users", key = "'allIncludingDeleted'")
+	})
 	public Map<String, String> register(RegisterRequest dto) {
 		if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
 			throw new ResourceAlreadyInUseException("Email already in use", dto.getEmail());

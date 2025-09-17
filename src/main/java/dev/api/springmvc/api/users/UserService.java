@@ -7,6 +7,9 @@ import dev.api.springmvc.common.entities.models.Users;
 import dev.api.springmvc.common.entities.search.SearchCriteria;
 import dev.api.springmvc.common.entities.search.SqlParameters;
 import dev.api.springmvc.common.exceptions.ResourceNotFoundException;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -89,6 +92,7 @@ public class UserService {
 	 *
 	 * @return List<User> - all users
 	 */
+	@Cacheable(value = "users", key = "'all'")
 	public List<UserDto> findAll() {
 		return this.userRepository.findAll().stream()
 				.map(Users::generateDto)
@@ -101,6 +105,7 @@ public class UserService {
 	 *
 	 * @return List<User> - all users including deleted ones
 	 */
+	@Cacheable(value = "users", key = "'allIncludingDeleted'")
 	public List<UserDto> findAllIncludingDeleted() {
 		return this.userRepository.findAllIncludingDeleted().stream()
 				.map(Users::generateDto)
@@ -125,6 +130,7 @@ public class UserService {
 	 * @param id - the user's ID
 	 * @return User - requested user
 	 */
+	@Cacheable(value = "users", key = "#id")
 	public UserDto findById(Long id) {
 		Optional<Users> requestedUser = this.userRepository.findById(id);
 		if (requestedUser.isPresent()) {
@@ -141,6 +147,7 @@ public class UserService {
 	 * @param id - the user's ID
 	 * @return User - requested user
 	 */
+	@Cacheable(value = "users", key = "#id")
 	public UserDto findByIdIncludingDeleted(Long id) {
 		Optional<Users> requestedUser = this.userRepository.findByIdIncludingDeleted(id).stream().findFirst();
 		if (requestedUser.isPresent()) {
@@ -189,6 +196,11 @@ public class UserService {
 	 * @param dto - User objet to be updated
 	 * @return User - updated User
 	 */
+	@Caching(evict = {
+			@CacheEvict(value = "users", key = "'all'"),
+			@CacheEvict(value = "users", key = "'allIncludingDeleted'"),
+			@CacheEvict(value = "users", key = "#dto.id()")
+	})
 	public UserDto update(UpdateUserDto dto) {
 		if (this.userRepository.existsById(dto.id())) {
 			Users updated = this.userRepository.save(dto.updateUser());
@@ -223,6 +235,11 @@ public class UserService {
 	 *
 	 * @param id - the user's ID
 	 */
+	@Caching(evict = {
+			@CacheEvict(value = "users", key = "'all'"),
+			@CacheEvict(value = "users", key = "'allIncludingDeleted'"),
+			@CacheEvict(value = "users", key = "#id")
+	})
 	public void delete(Long id) {
 		this.userRepository.delete(
 				this.userRepository.findById(id).orElseThrow(() ->
@@ -237,6 +254,11 @@ public class UserService {
 	 * @param id - the user's ID
 	 * @return User - restored user
 	 */
+	@Caching(evict = {
+			@CacheEvict(value = "users", key = "'all'"),
+			@CacheEvict(value = "users", key = "'allIncludingDeleted'"),
+			@CacheEvict(value = "users", key = "#id")
+	})
 	public UserDto restoreById(Long id) {
 		Optional<Users> restoredUser = this.userRepository.restoreById(id);
 		if (restoredUser.isPresent()) {
