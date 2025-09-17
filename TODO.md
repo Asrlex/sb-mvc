@@ -4,17 +4,17 @@
 
 ## PHASE 1
 
-- [x] Basic Controllers
-- [x] Auth Module
+- [x] **Basic Controllers**
+- [x] **Auth Module**
   - [x] JWT Authentication
   - [x] API Key Authentication
   - [x] Composite Authentication Pipeline
-- [x] Security Configuration
+- [x] **Security Configuration**
   - [x] Access Points
   - [x] Custom Entry Point & Access Denied Handler
-- [x] Request Logging Filter
-- [x] Response Wrapper
-- [x] JPA Integration
+- [x] **Request Logging Filter**
+- [x] **Response Wrapper**
+- [x] **JPA Integration**
   - [x] User Entity
   - [x] Validation & Error Handling
   - [x] Pagination & Sorting
@@ -24,26 +24,30 @@
   - [x] Audit Fields
   - [x] Soft Deletion
   - [x] Custom Repositories with Generics and Specifications
-- [x] Standardized Error Handling
-- [x] README.md
-- [x] OpenAPI/Swagger Integration
+- [x] **Standardized Error Handling**
+- [x] **README.md**
+- [x] **OpenAPI/Swagger Integration**
 
 ## PHASE 2
 
-- [x] Docker
+- [x] **Docker**
   - [x] Dockerfile
   - [x] Environment Variables
   - [x] Docker Compose with SQLite (for local dev)
   - [x] Docker Compose with Postgres
   - [x] Multi-stage builds for smaller image size
   - [x] Flyway migrations in Docker
-- [x] RBAC/ABAC
+- [x] **RBAC/ABAC**
   - [x] Role-Based Access Control (RBAC)
   - [x] Hierarchical Roles
-- [x] Caching with Redis/Caffeine
-  - 
+- [x] **Caching**
+  - [x] Spring Cache Abstraction
+  - [x] In-Memory Caffeine Cache for Local Dev
+  - [x] Redis Integration in Production
+  - [x] Cache Eviction Strategies
 - [ ] Rate Limiting with Bucket4j
 - [ ] Internationalization (i18n)
+- [ ] RESPONSE ENTITY
 
 ## PHASE 3
 
