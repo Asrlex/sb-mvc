@@ -40,7 +40,8 @@
 - [x] RBAC/ABAC
   - [x] Role-Based Access Control (RBAC)
   - [x] Hierarchical Roles
-- [ ] Caching with Redis/Caffeine
+- [x] Caching with Redis/Caffeine
+  - 
 - [ ] Rate Limiting with Bucket4j
 - [ ] Internationalization (i18n)
 
