@@ -20,6 +20,8 @@ A robust, production-ready Spring Boot API scaffolding project with modular auth
 - **Custom Entry Point & Access Denied Handler**: Standardized error responses for unauthorized and forbidden access.
 - **Endpoint Whitelisting**: Public access for `/auth/**`, `/healthcheck`, and Swagger docs; all other endpoints require authentication.
 - **Filter Registration**: Ensures custom filters are properly registered in the security chain.
+- **Password Encoding**: Uses BCrypt for secure password storage.
+- **RBAC Ready**: Easily extendable for hierarchical role-based access control.
 
 ### 4. Access Points
 - **RESTful Endpoints**: Well-structured, discoverable API routes for all resources.
@@ -52,6 +54,12 @@ A robust, production-ready Spring Boot API scaffolding project with modular auth
 ### 9. OpenAPI/Swagger Integration
 - **Auto-generated Documentation**: Comprehensive API docs generated from code annotations.
 - **Interactive UI**: Explore and test API endpoints directly from the Swagger UI.
+
+### 10. Docker Support
+- **Dockerfile**: Multi-stage build for optimized image size.
+- **Environment Variables**: Configurable via environment variables for flexibility.
+- **Docker Compose**: Pre-configured setups for local development (SQLite) and production (PostgreSQL).
+- **Flyway Migrations**: Automatic database migrations on container startup.
 
 ---
 

@@ -37,9 +37,11 @@
   - [x] Docker Compose with Postgres
   - [x] Multi-stage builds for smaller image size
   - [x] Flyway migrations in Docker
+- [x] RBAC/ABAC
+  - [x] Role-Based Access Control (RBAC)
+  - [x] Hierarchical Roles
 - [ ] Caching with Redis/Caffeine
 - [ ] Rate Limiting with Bucket4j
-- [ ] RBAC/ABAC
 - [ ] Internationalization (i18n)
 
 ## PHASE 3
