@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -134,6 +135,7 @@ public class UserController {
 
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasRole('ADMIN')")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@Operation(summary = "Delete User", description = "Delete a user by ID")
 	@ApiResponses(value = {
 		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "User deleted successfully"),
@@ -147,6 +149,7 @@ public class UserController {
 
 	@PostMapping("/restore/{id}")
 	@PreAuthorize("hasRole('ADMIN')")
+	@ResponseStatus(HttpStatus.CREATED)
 	@Operation(summary = "Restore User", description = "Restore a soft-deleted user by ID")
 	@ApiResponses(value = {
 		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "User restored successfully"),

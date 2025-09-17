@@ -5,10 +5,8 @@ import dev.api.springmvc.api.auth.entities.RegisterRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -39,6 +37,7 @@ public class AuthController {
 	}
 
 	@PostMapping("/register")
+	@ResponseStatus(HttpStatus.CREATED)
 	@Operation(summary = "User Registration", description = "Register a new user")
 	@io.swagger.v3.oas.annotations.parameters.RequestBody(
 		description = "Registration payload",

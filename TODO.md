@@ -45,7 +45,8 @@
   - [x] In-Memory Caffeine Cache for Local Dev
   - [x] Redis Integration in Production
   - [x] Cache Eviction Strategies
-- [ ] Rate Limiting with Bucket4j
+- [x] **Rate Limiting with Bucket4j**
+  - [x] Role-based Rate Limits
 - [ ] Internationalization (i18n)
 - [ ] RESPONSE ENTITY
 

@@ -2,6 +2,7 @@ package dev.api.springmvc.common.advices;
 
 import dev.api.springmvc.common.entities.ApiEnvelopeResponseCode;
 import dev.api.springmvc.common.exceptions.ApiException;
+import dev.api.springmvc.common.exceptions.RateLimitExceededException;
 import dev.api.springmvc.common.exceptions.ResourceNotFoundException;
 import dev.api.springmvc.common.filter.ApiEnvelope;
 import jakarta.servlet.http.HttpServletRequest;
@@ -99,6 +100,16 @@ public class GlobalExceptionHandler {
 						ex.getMessage(),
 						req.getRequestURI(),
 						meta));
+	}
+
+	@ExceptionHandler(RateLimitExceededException.class)
+	public ResponseEntity<ApiEnvelope<Void>> handleRateLimitExceeded(RateLimitExceededException ex, HttpServletRequest req) {
+		return ResponseEntity
+				.status(HttpStatus.TOO_MANY_REQUESTS)
+				.body(ApiEnvelope.error(
+						ApiEnvelopeResponseCode.TOO_MANY_REQUESTS.name(),
+						ex.getMessage(),
+						req.getRequestURI()));
 	}
 
 	/** Handle ErrorResponseException for other HTTP status codes. */
