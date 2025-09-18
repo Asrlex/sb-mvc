@@ -42,5 +42,25 @@ services:
     ports:
       - "6379:6379"
 
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0.1
+    container_name: keycloak
+    command: start-dev --import-realm
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL_HOST: db
+      KC_DB_URL_DATABASE: springmvc
+      KC_DB_USERNAME: appuser
+      KC_DB_PASSWORD: apppass
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./keycloak/realms:/opt/keycloak/data/import
+    depends_on:
+      - db
+    restart: unless-stopped
+
 volumes:
   pgdata:

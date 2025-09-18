@@ -48,7 +48,6 @@
 - [x] **Rate Limiting with Bucket4j**
   - [x] Role-based Rate Limits
 - [ ] Internationalization (i18n)
-- [ ] RESPONSE ENTITY
 
 ## PHASE 3
 
@@ -56,6 +55,8 @@
   - [ ] OAuth2 Support
   - [ ] GraphQL Support
   - [ ] WebSocket Support
+  - [ ] Kafka/RabbitMQ Integration
+  - [ ] gRPC Support
 - [ ] Observability Stack
   - [ ] Micrometer/Prometheus Metrics
   - [ ] Tracing with OpenTelemetry
