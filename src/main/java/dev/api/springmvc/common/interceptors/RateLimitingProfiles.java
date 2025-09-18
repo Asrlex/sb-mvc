@@ -8,11 +8,11 @@ import java.time.Duration;
 public class RateLimitingProfiles {
 	@Value("${ratelimit.admin}")
 	private static Integer ADMIN;
-	@Value("${ratelimit.admin}")
+	@Value("${ratelimit.user}")
 	private static Integer USER;
-	@Value("${ratelimit.admin}")
+	@Value("${ratelimit.api}")
 	private static Integer API;
-	@Value("${ratelimit.admin}")
+	@Value("${ratelimit.guest}")
 	private static Integer GUEST;
 
 	public static Bandwidth getLimit(String role) {

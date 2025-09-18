@@ -7,12 +7,17 @@ import dev.api.springmvc.common.entities.models.Users;
 import dev.api.springmvc.common.entities.search.SearchCriteria;
 import dev.api.springmvc.common.entities.search.SqlParameters;
 import dev.api.springmvc.common.exceptions.ResourceNotFoundException;
+import dev.api.springmvc.common.kafka.events.users.UserDeletedEvent;
+import dev.api.springmvc.common.kafka.events.users.UserRestoredEvent;
+import dev.api.springmvc.common.kafka.events.users.UserUpdatedEvent;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
@@ -24,10 +29,15 @@ public class UserService {
 
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final ApplicationEventPublisher eventPublisher;
 
-	public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+	public UserService(
+			UserRepository userRepository,
+			PasswordEncoder passwordEncoder,
+			ApplicationEventPublisher eventPublisher) {
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
+		this.eventPublisher = eventPublisher;
 	}
 
 	/**
@@ -196,6 +206,7 @@ public class UserService {
 	 * @param dto - User objet to be updated
 	 * @return User - updated User
 	 */
+	@Transactional
 	@Caching(evict = {
 			@CacheEvict(value = "users", key = "'all'"),
 			@CacheEvict(value = "users", key = "'allIncludingDeleted'"),
@@ -204,7 +215,9 @@ public class UserService {
 	public UserDto update(UpdateUserDto dto) {
 		if (this.userRepository.existsById(dto.id())) {
 			Users updated = this.userRepository.save(dto.updateUser());
-			return updated.generateDto();
+			UserDto updatedDto = updated.generateDto();
+			eventPublisher.publishEvent(new UserUpdatedEvent(updatedDto));
+			return updatedDto;
 		} else {
 			throw new ResourceNotFoundException("User with id " + dto.id() + " not found");
 		}
@@ -216,6 +229,7 @@ public class UserService {
 	 * @param dto - map containing old and new password
 	 * @return map containing success message
 	 */
+	@Transactional
 	public UserDto changePassword(LoginRequest dto) {
 		Users user = userRepository.findByEmail(dto.getEmail())
 				.orElseThrow(() -> new ResourceNotFoundException("User with email " + dto.getEmail() + " not found"));
@@ -226,8 +240,10 @@ public class UserService {
 
 		user.setPasswordHash(passwordEncoder.encode(dto.getPassword()));
 		Users saved = userRepository.save(user);
+		UserDto savedDto = saved.generateDto();
+		eventPublisher.publishEvent(new UserUpdatedEvent(savedDto));
 
-		return saved.generateDto();
+		return savedDto;
 	}
 
 	/**
@@ -235,6 +251,7 @@ public class UserService {
 	 *
 	 * @param id - the user's ID
 	 */
+	@Transactional
 	@Caching(evict = {
 			@CacheEvict(value = "users", key = "'all'"),
 			@CacheEvict(value = "users", key = "'allIncludingDeleted'"),
@@ -246,6 +263,7 @@ public class UserService {
 						new ResourceNotFoundException("User with id " + id + " not found")
 				)
 		);
+		eventPublisher.publishEvent(new UserDeletedEvent(id));
 	}
 
 	/**
@@ -254,18 +272,20 @@ public class UserService {
 	 * @param id - the user's ID
 	 * @return User - restored user
 	 */
+	@Transactional
 	@Caching(evict = {
 			@CacheEvict(value = "users", key = "'all'"),
 			@CacheEvict(value = "users", key = "'allIncludingDeleted'"),
 			@CacheEvict(value = "users", key = "#id")
 	})
 	public UserDto restoreById(Long id) {
-		Optional<Users> restoredUser = this.userRepository.restoreById(id);
-		if (restoredUser.isPresent()) {
-			Users user = restoredUser.get();
-			return user.generateDto();
-		} else {
+		Optional<Users> originalUser = this.userRepository.findByIdIncludingDeleted(id).stream().findFirst();
+		if (originalUser.isEmpty()) {
 			throw new ResourceNotFoundException("User with id " + id + " not found or not deleted");
 		}
+		this.userRepository.restoreById(originalUser.get().getId());
+		UserDto restoredUser = originalUser.get().generateDto();
+		eventPublisher.publishEvent(new UserRestoredEvent(restoredUser));
+		return restoredUser;
 	}
 }
