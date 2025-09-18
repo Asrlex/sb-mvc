@@ -1,5 +1,10 @@
 package dev.api.springmvc.api.users.dtos;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 public class UserDto {
 
 	private Long id;
@@ -11,31 +16,6 @@ public class UserDto {
 		this.id = id;
 		this.username = username;
 		this.email = email;
-		this.role = role;
-	}
-
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
-	public String getUsername() {
-		return username;
-	}
-	public void setUsername(String username) {
-		this.username = username;
-	}
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
-	public String getRole() {
-		return role;
-	}
-	public void setRole(String role) {
 		this.role = role;
 	}
 }

@@ -3,6 +3,8 @@ package dev.api.springmvc.common.entities.models;
 import dev.api.springmvc.api.users.dtos.UserDto;
 import dev.api.springmvc.common.audit.AuditableEntity;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
@@ -15,19 +17,27 @@ import org.hibernate.annotations.SQLDelete;
 @Filter(name = "deletedFilter", condition = "deleted_at IS NULL")
 public class Users extends AuditableEntity {
 
+	@Setter
+	@Getter
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Setter
+	@Getter
 	@Column(nullable = false)
 	private String username;
 
+	@Setter
+	@Getter
 	@Column(nullable = false, unique = true)
 	private String email;
 
 	@Column(nullable = false)
 	private String password_hash;
 
+	@Setter
+	@Getter
 	@Column(nullable = false)
 	private String role;
 
@@ -61,35 +71,10 @@ public class Users extends AuditableEntity {
 		return new UserDto(this.id, this.username, this.email, this.role);
 	}
 
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
-	public String getUsername() {
-		return username;
-	}
-	public void setUsername(String name) {
-		this.username = name;
-	}
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
 	public String getPasswordHash() {
 		return password_hash;
 	}
 	public void setPasswordHash(String password) {
 		this.password_hash = password;
 	}
-	public String getRole() {
-		return role;
-	}
-	public void setRole(String role) {
-		this.role = role;
-	}
-
 }
