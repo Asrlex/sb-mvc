@@ -12,7 +12,8 @@ public abstract class KafkaGenericConsumer<T> {
 	protected final ObjectMapper mapper;
 	private final KafkaService kafkaService;
 
-	public KafkaGenericConsumer(ObjectMapper mapper, KafkaService kafkaService) {
+	public KafkaGenericConsumer(
+			ObjectMapper mapper,KafkaService kafkaService) {
 		this.mapper = mapper;
 		this.kafkaService = kafkaService;
 	}
@@ -46,7 +47,7 @@ public abstract class KafkaGenericConsumer<T> {
 	 * @param e   the exception that was thrown
 	 */
 	protected void onError(String raw, Exception e) {
-		log.error("Failed to process Kafka message: {}", raw);
+		log.error("Failed to process Kafka message: {} with exception {}", raw, e.getMessage());
 		kafkaService.sendToDLQ("dlq-topic", raw);
 	}
 }

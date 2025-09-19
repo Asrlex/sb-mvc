@@ -2,9 +2,10 @@ package dev.api.springmvc.common.kafka.consumers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.api.springmvc.common.entities.models.Users;
+import dev.api.springmvc.api.users.dtos.UserDto;
 import dev.api.springmvc.common.kafka.KafkaMessage;
 import dev.api.springmvc.common.kafka.KafkaService;
+import dev.api.springmvc.common.websocket.WebSocketSessionManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -14,13 +15,14 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j(topic = "KafkaUserConsumer")
 @Component
-public class KafkaUserConsumer extends KafkaGenericConsumer<Users> {
+public class KafkaUserConsumer extends KafkaGenericConsumer<UserDto> {
 
 	private static final String TOPIC = "user-events";
-	private KafkaService kafkaService;
+	private final WebSocketSessionManager sessionManager;
 
-	public KafkaUserConsumer(ObjectMapper mapper, KafkaService kafkaService) {
+	public KafkaUserConsumer(ObjectMapper mapper, KafkaService kafkaService, WebSocketSessionManager sessionManager) {
 		super(mapper, kafkaService);
+		this.sessionManager = sessionManager;
 	}
 
 	/**
@@ -30,7 +32,7 @@ public class KafkaUserConsumer extends KafkaGenericConsumer<Users> {
 	 */
 	@KafkaListener(topics = TOPIC, groupId = "springmvc-group")
 	public void consume(String messageJson) {
-		super.consume(messageJson, new TypeReference<KafkaMessage<Users>>() {});
+		super.consume(messageJson, new TypeReference<KafkaMessage<UserDto>>() {});
 	}
 
 	/**
@@ -39,13 +41,23 @@ public class KafkaUserConsumer extends KafkaGenericConsumer<Users> {
 	 * @param message the Kafka message containing the user event
 	 */
 	@Override
-	protected void handleEvent(KafkaMessage<Users> message) {
+	protected void handleEvent(KafkaMessage<UserDto> message) {
+		log.info("Handle user {} logic: {}", message.getType(), message.getPayload());
 		switch (message.getType()) {
-			case CREATE -> log.info("Handle user creation logic: {}", message.getPayload());
-			case UPDATE -> log.info("Handle user update logic: {}", message.getPayload());
-			case DELETE -> log.info("Handle user deletion logic: {}", message.getPayload());
-			case RESTORE -> log.info("Handle user restoration logic: {}", message.getPayload());
+			case CREATE -> notifyWebSocketClients("User created: " + message.getPayload().getUsername());
+			case UPDATE -> notifyWebSocketClients("User updated: " + message.getPayload().getUsername());
+			case DELETE -> notifyWebSocketClients("User deleted: " + message.getPayload().getUsername());
+			case RESTORE -> notifyWebSocketClients("User restored: " + message.getPayload().getUsername());
 			default -> log.warn("Unknown event type: {}", message.getType());
 		}
+	}
+
+	/**
+	 * Notifies connected WebSocket clients about the user event.
+	 *
+	 * @param notification the notification message to send
+	 */
+	private void notifyWebSocketClients(String notification) {
+		sessionManager.broadcast(notification);
 	}
 }

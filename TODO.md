@@ -51,11 +51,14 @@
 
 ## PHASE 3
 
+- [x] OAuth2 Support
+- [x] Kafka/RabbitMQ Integration
+  - [x] Abstracted Messaging Layer
+  - [x] Example Producer/Consumer
+  - [x] DQL Handling
+- [ ] WebSocket Support
 - [ ] Extra Support
-  - [ ] OAuth2 Support
   - [ ] GraphQL Support
-  - [ ] WebSocket Support
-  - [ ] Kafka/RabbitMQ Integration
   - [ ] gRPC Support
 - [ ] Observability Stack
   - [ ] Micrometer/Prometheus Metrics
