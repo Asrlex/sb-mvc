@@ -61,6 +61,36 @@ A robust, production-ready Spring Boot API scaffolding project with modular auth
 - **Docker Compose**: Pre-configured setups for local development (SQLite) and production (PostgreSQL).
 - **Flyway Migrations**: Automatic database migrations on container startup.
 
+### 11. Caching
+- **Spring Cache Abstraction**: Easy-to-use caching layer.
+- **Caffeine Cache**: In-memory caching for local development.
+- **Redis Integration**: Production-ready caching with Redis support.
+- **Cache Eviction Strategies**: Configurable cache expiration and eviction policies.
+
+### 12. Rate Limiting with Bucket4j
+- **Role-based Rate Limits**: Different limits for regular users and admins.
+- **In-memory and Distributed Options**: Flexible storage backends for rate limiting.
+
+### 13. OAuth2 Support
+- **OAuth2 Client**: Support for third-party OAuth2 providers.
+- **OAuth2 Resource Server**: Secure API endpoints with OAuth2 tokens.
+- **Token Management**: Handle token issuance, revocation, and introspection.
+- **Keycloak Integration**: Example setup for Keycloak as an identity provider.
+
+### 14. Kafka/RabbitMQ Integration
+- **Abstracted Messaging Layer**: Interface for sending and receiving messages.
+- **Example Producer/Consumer**: Sample implementations for both Kafka and RabbitMQ.
+- **Dead Letter Queue Handling**: Robust error handling for message processing failures.
+- **Configuration Flexibility**: Easily switch between Kafka and RabbitMQ via configuration.
+
+### 15. WebSocket Support
+- **Real-time Communication**: WebSocket endpoints for live updates.
+- **STOMP Protocol**: Support for messaging over WebSockets with STOMP.
+- **Security Integration**: Secure WebSocket connections with existing authentication mechanisms.
+- **Scalability**: Configurable message broker for handling large volumes of WebSocket messages.
+
+### 16. GraphQL Support (Planned)
+
 ---
 
 ## Getting Started

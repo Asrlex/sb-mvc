@@ -55,6 +55,16 @@ public class JwtService {
 	}
 
 	/**
+	 * Validates the given JWT token.
+	 *
+	 * @param token the JWT token to validate
+	 * @throws JwtException if the token is invalid or expired
+	 */
+	public void validateToken(String token) throws JwtException {
+		parseToken(token);
+	}
+
+	/**
 	 * Extracts the subject from the given JWT token.
 	 *
 	 * @param token the JWT token

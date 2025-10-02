@@ -56,16 +56,8 @@
   - [x] Abstracted Messaging Layer
   - [x] Example Producer/Consumer
   - [x] DQL Handling
-- [ ] WebSocket Support
-- [ ] Extra Support
-  - [ ] GraphQL Support
-  - [ ] gRPC Support
-- [ ] Observability Stack
-  - [ ] Micrometer/Prometheus Metrics
-  - [ ] Tracing with OpenTelemetry
-  - [ ] JSON structured logs for ELK/Loki
-- [ ] Resilience & Messaging
-  - [ ] Add Resilience4j (retry, circuit breaker).
-  - [ ] Add Kafka/RabbitMQ integration for async flows.
+- [x] WebSocket Support
+    - [x] Real-time Notifications
+    - [x] Kafka Integration for WebSocket Message Broadcasting
+- [ ] GraphQL Support
 - [ ] CI/CD Pipeline (GitHub Actions)
-- 
