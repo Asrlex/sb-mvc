@@ -59,5 +59,5 @@
 - [x] WebSocket Support
     - [x] Real-time Notifications
     - [x] Kafka Integration for WebSocket Message Broadcasting
-- [ ] GraphQL Support
+- [x] GraphQL Support
 - [ ] CI/CD Pipeline (GitHub Actions)

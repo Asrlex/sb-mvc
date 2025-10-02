@@ -89,7 +89,11 @@ A robust, production-ready Spring Boot API scaffolding project with modular auth
 - **Security Integration**: Secure WebSocket connections with existing authentication mechanisms.
 - **Scalability**: Configurable message broker for handling large volumes of WebSocket messages.
 
-### 16. GraphQL Support (Planned)
+### 16. GraphQL Support
+- **GraphQL Endpoint**: Single endpoint for flexible data querying.
+- **Schema Definition**: Define types, queries, and mutations using SDL.
+- **Integration with JPA**: Seamless data fetching from JPA entities.
+- **Subscriptions**: Real-time updates via GraphQL subscriptions.
 
 ---
 
